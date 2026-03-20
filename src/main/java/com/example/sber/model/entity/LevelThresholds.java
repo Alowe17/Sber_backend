@@ -19,6 +19,7 @@ public class LevelThresholds {
     private Long id;
     @ManyToOne()
     private Employee employee;
+    @Enumerated(EnumType.STRING)
     private EventType eventType;
     private long value;
     private String sourse_id;

@@ -1,7 +1,7 @@
 package com.example.sber.model.entity;
 
 
-import com.example.sber.model.enums.CorrentLevel;
+import com.example.sber.model.enums.CurrentLevel;
 import com.example.sber.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -16,7 +16,6 @@ import java.time.LocalDate;
 @Entity
 @Table(name="employees")
 public class Employee {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,12 +24,14 @@ public class Employee {
     private String email;
     private String password;
     private String phone;
-    private CorrentLevel correntLevel;
+    @Enumerated(EnumType.STRING)
+    private CurrentLevel currentLevel;
+    @Enumerated(EnumType.STRING)
     private Role role;
     @ManyToOne
+    @JoinColumn(name = "dealer_center_id")
     private DealerCenter dealerCenter;
     private LocalDate registrationDate;
     private int ratingPoints;
     private int sberId;
-
 }

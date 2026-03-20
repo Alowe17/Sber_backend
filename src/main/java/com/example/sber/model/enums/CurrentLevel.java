@@ -1,6 +1,6 @@
 package com.example.sber.model.enums;
 
-public enum CorrentLevel {
+public enum CurrentLevel {
     SILVER,
     GOLD,
     BLACK

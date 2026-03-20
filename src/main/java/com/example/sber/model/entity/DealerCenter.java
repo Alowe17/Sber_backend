@@ -18,4 +18,4 @@ public class DealerCenter {
     private String address;
     @ManyToOne
     private Region region;
-    }
+}
