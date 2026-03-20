@@ -18,4 +18,14 @@ public class DealerCenter {
     private String address;
     @ManyToOne
     private Region region;
+
+    public DealerCenter (Long id, String code, String name, String address, Region region) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.address = address;
+        this.region = region;
+    }
+
+    public DealerCenter() {}
 }

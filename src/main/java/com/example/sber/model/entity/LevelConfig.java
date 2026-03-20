@@ -18,4 +18,12 @@ public class LevelConfig {
     private CurrentLevel currentLevel;
 
     private int minPoints;
+
+    public LevelConfig (Long id, CurrentLevel currentLevel, int minPoints) {
+        this.id = id;
+        this.currentLevel = currentLevel;
+        this.minPoints = minPoints;
+    }
+
+    public LevelConfig() {}
 }

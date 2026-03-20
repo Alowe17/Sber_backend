@@ -34,4 +34,19 @@ public class Employee {
     private LocalDate registrationDate;
     private int ratingPoints;
     private int sberId;
+
+    public Employee (Long id, String fullName, String email, String password, String phone, CurrentLevel currentLevel, Role role, DealerCenter dealerCenter, int ratingPoints, int sberId) {
+        this.id = id;
+        this.fullName = fullName;
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+        this.currentLevel = currentLevel;
+        this.role = role;
+        this.dealerCenter = dealerCenter;
+        this.ratingPoints = ratingPoints;
+        this.sberId = sberId;
+    }
+
+    public Employee() {}
 }

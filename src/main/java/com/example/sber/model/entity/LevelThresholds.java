@@ -24,4 +24,14 @@ public class LevelThresholds {
     private long value;
     private String sourse_id;
     private LocalDateTime dateTime;
+
+    public LevelThresholds (Long id, Employee employee, EventType eventType, String sourse_id, LocalDateTime dateTime) {
+        this.id = id;
+        this.employee = employee;
+        this.eventType = eventType;
+        this.sourse_id = sourse_id;
+        this.dateTime = dateTime;
+    }
+
+    public LevelThresholds () {}
 }
