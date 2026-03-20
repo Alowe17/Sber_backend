@@ -1,0 +1,26 @@
+package com.example.sber.model.entity;
+
+import com.example.sber.model.enums.EventType;
+import jakarta.persistence.*;
+import jdk.jfr.Threshold;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.util.logging.Level;
+
+@Getter
+@Setter
+@Entity
+@Table(name="level_thresholds")
+public class LevelThresholds {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @ManyToOne()
+    private Employee employee;
+    private EventType eventType;
+    private long value;
+    private String sourse_id;
+    private LocalDateTime dateTime;
+}
