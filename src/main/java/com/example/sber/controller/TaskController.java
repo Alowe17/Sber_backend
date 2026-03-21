@@ -1,7 +1,8 @@
 package com.example.sber.controller;
 
+import com.example.sber.model.entity.EmployeeTask;
 import com.example.sber.model.entity.Task;
-import com.example.sber.repository.TaskRepository;
+import com.example.sber.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,15 +13,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TaskController {
 
-    private final TaskRepository taskRepository;
+    private final TaskService taskService;
 
     @GetMapping
     public List<Task> getTasks() {
-        return taskRepository.findAll();
+        return taskService.getTasks();
     }
 
-    @GetMapping("/{id}")
-    public Task getTaskById(@PathVariable Long id) {
-        return taskRepository.findById(id).orElseThrow();
+    @GetMapping("/my")
+    public List<EmployeeTask> getMyTasks(@RequestHeader("X-User-Id") Long employeeId) {
+        return taskService.getEmployeeTasks(employeeId);
     }
 }

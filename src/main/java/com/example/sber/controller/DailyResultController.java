@@ -28,7 +28,7 @@ public class DailyResultController {
         double volume = ((Number) request.getOrDefault("volumeAmount", 0)).doubleValue();
         int products = ((Number) request.getOrDefault("productsCount", 0)).intValue();
 
-        dailyResultService.createDailyResult(deals, volume, products, employeeId);
+        dailyResultService.createDailyResult(employeeId, deals, volume, products);
 
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
