@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/status")
+@RequestMapping("/api/status")
 public class StatusController {
 
     private final StatusService statusService;

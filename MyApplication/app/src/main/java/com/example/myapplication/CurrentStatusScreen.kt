@@ -24,12 +24,10 @@ fun CurrentStatusScreen(
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        scope.launch {
-            try {
-                status = ApiService.getStatus(1)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+        try {
+            status = ApiClient.api.getStatus(1L)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
