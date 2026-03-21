@@ -1,12 +1,10 @@
 package com.example.sber.repository;
 
 import com.example.sber.model.entity.DealerCenter;
-import org.springframework.stereotype.Repository;
-
+import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
-@Repository
-public interface DealerCenterRepository {
+public interface DealerCenterRepository extends JpaRepository<DealerCenter,Long> {
 
     List<DealerCenter> findByCode(String code);
 

@@ -1,12 +1,11 @@
 package com.example.sber.repository;
 
 import com.example.sber.model.entity.EmployeeTask;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-@Repository
-public interface EmployeeTaskRepository {
+public interface EmployeeTaskRepository extends JpaRepository<EmployeeTask,Long> {
 
     List<EmployeeTask> findByEmployeeId(Long employeeId);
 

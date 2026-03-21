@@ -2,12 +2,11 @@ package com.example.sber.repository;
 
 import com.example.sber.model.entity.Privilege;
 import com.example.sber.model.enums.CurrentLevel;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-@Repository
-public interface PrivilegeRepository {
+public interface PrivilegeRepository extends JpaRepository<Privilege,Long> {
 
     List<Privilege> findAll();
 
