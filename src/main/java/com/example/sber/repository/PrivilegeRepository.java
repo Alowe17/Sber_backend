@@ -9,6 +9,8 @@ import java.util.List;
 @Repository
 public interface PrivilegeRepository {
 
+    List<Privilege> findAll();
+
     List<Privilege> findByRequiredLevel(CurrentLevel requiredLevel);
 
     List<Privilege> findByNameContainingIgnoreCase(String name);
