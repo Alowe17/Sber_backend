@@ -2,8 +2,10 @@ package com.example.sber.controller;
 
 import com.example.sber.model.entity.LevelThresholds;
 import com.example.sber.model.enums.EventType;
-import com.example.sber.repository.LevelThresholdsRepository;
+import com.example.sber.service.EmployeeService;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,24 +13,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/level-thresholds")
 @RequiredArgsConstructor
+@Validated
 public class LevelThresholdsController {
 
-    private final LevelThresholdsRepository levelThresholdsRepository;
+    private final EmployeeService employeeService;
 
     @GetMapping
     public List<LevelThresholds> getThresholds(
-            @RequestParam(required = false) Long employeeId,
+            @RequestParam(required = false) @Positive Long employeeId,
             @RequestParam(required = false) EventType eventType) {
-
-        if (employeeId != null && eventType != null) {
-            return levelThresholdsRepository.findByEmployeeIdAndEventType(employeeId, eventType);
-        }
-        if (employeeId != null) {
-            return levelThresholdsRepository.findByEmployeeId(employeeId);
-        }
-        if (eventType != null) {
-            return levelThresholdsRepository.findByEventType(eventType);
-        }
-        return levelThresholdsRepository.findAll();
+        return employeeService.getThresholds(employeeId, eventType);
     }
 }

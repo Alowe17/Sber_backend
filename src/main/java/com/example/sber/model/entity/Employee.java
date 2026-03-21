@@ -3,6 +3,7 @@ package com.example.sber.model.entity;
 
 import com.example.sber.model.enums.CurrentLevel;
 import com.example.sber.model.enums.Role;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +23,7 @@ public class Employee {
 
     private String fullName;
     private String email;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private String phone;
     @Enumerated(EnumType.STRING)

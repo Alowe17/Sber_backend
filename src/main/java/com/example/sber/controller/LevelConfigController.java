@@ -2,7 +2,7 @@ package com.example.sber.controller;
 
 import com.example.sber.model.entity.LevelConfig;
 import com.example.sber.model.enums.CurrentLevel;
-import com.example.sber.repository.LevelConfigRepository;
+import com.example.sber.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,15 +13,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LevelConfigController {
 
-    private final LevelConfigRepository levelConfigRepository;
+    private final EmployeeService employeeService;
 
     @GetMapping
     public List<LevelConfig> getLevelConfig() {
-        return levelConfigRepository.findAll();
+        return employeeService.getLevelConfig();
     }
 
     @GetMapping("/by-level")
     public LevelConfig getByLevel(@RequestParam CurrentLevel currentLevel) {
-        return levelConfigRepository.findByCurrentLevel(currentLevel).orElseThrow();
+        return employeeService.getLevelConfigByLevel(currentLevel);
     }
 }
