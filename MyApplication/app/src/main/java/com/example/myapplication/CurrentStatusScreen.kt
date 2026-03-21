@@ -5,18 +5,48 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.myapplication.network.ApiClient
+import com.example.myapplication.network.ApiConfig
+import com.example.myapplication.network.StatusResponse
 import com.example.myapplication.ui.theme.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun CurrentStatusScreen(
     onNavigateToCalc: () -> Unit
 ) {
+    var status by remember { mutableStateOf<StatusResponse?>(null) }
+    var loading by remember { mutableStateOf(true) }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(Unit) {
+        loading = true
+        error = null
+        runCatching {
+            withContext(Dispatchers.IO) {
+                ApiClient.api.getCurrentStatus(ApiConfig.USER_ID)
+            }
+        }.onSuccess {
+            status = it
+        }.onFailure {
+            error = "Не удалось загрузить статус"
+        }
+        loading = false
+    }
+
+    val level = status?.currentLevel ?: "UNKNOWN"
+    val nextLevel = status?.nextLevel ?: "NEXT"
+    val pointsToNext = status?.pointsToNext ?: 0
+    val progressPercent = (status?.progressPercent ?: 0).coerceIn(0, 100)
+    val progress = progressPercent / 100f
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -30,7 +60,7 @@ fun CurrentStatusScreen(
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        StatusBadge(level = "Silver")
+        StatusBadge(level = level)
 
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -42,7 +72,7 @@ fun CurrentStatusScreen(
         ) {
             Column(modifier = Modifier.padding(20.dp)) {
                 Text(
-                    text = "До Gold осталось 12 баллов",
+                    text = "До $nextLevel осталось $pointsToNext баллов",
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
@@ -50,7 +80,7 @@ fun CurrentStatusScreen(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 LinearProgressIndicator(
-                    progress = { 0.7f },
+                    progress = { progress },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(10.dp),
@@ -59,12 +89,20 @@ fun CurrentStatusScreen(
                 )
 
                 Text(
-                    text = "70%",
+                    text = "$progressPercent%",
                     modifier = Modifier.align(Alignment.End),
                     style = MaterialTheme.typography.bodySmall,
                     color = TextSecondaryGray
                 )
             }
+        }
+        if (loading) {
+            Spacer(modifier = Modifier.height(12.dp))
+            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+        }
+        if (error != null) {
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(text = error!!, color = WarningOrange)
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -84,7 +122,7 @@ fun CurrentStatusScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "При переходе на Gold ваш годовой доход вырастет на 180 000 ₽",
+                    text = "При переходе на $nextLevel ваш годовой доход вырастет",
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(

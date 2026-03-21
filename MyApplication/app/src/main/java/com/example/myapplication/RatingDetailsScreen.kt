@@ -8,19 +8,43 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.myapplication.network.ApiClient
+import com.example.myapplication.network.ApiConfig
+import com.example.myapplication.network.RatingDetailResponse
 import com.example.myapplication.ui.theme.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun RatingDetailsScreen(
     onNavigateToCalc: () -> Unit
 ) {
+    var details by remember { mutableStateOf<List<RatingDetailResponse>>(emptyList()) }
+    var loading by remember { mutableStateOf(true) }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(Unit) {
+        loading = true
+        error = null
+        runCatching {
+            withContext(Dispatchers.IO) {
+                ApiClient.api.getRatingDetails(ApiConfig.USER_ID)
+            }
+        }.onSuccess {
+            details = it
+        }.onFailure {
+            error = "Не удалось загрузить детализацию"
+        }
+        loading = false
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -40,11 +64,7 @@ fun RatingDetailsScreen(
                     fontWeight = FontWeight.Bold,
                     color = SberBlack
                 )
-                Text(
-                    text = "Обновлено: сегодня, 09:00",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TextSecondaryGray
-                )
+                Text(text = if (loading) "Обновление..." else "Данные из бэкенда", style = MaterialTheme.typography.bodySmall, color = TextSecondaryGray)
             }
             // Иконка инфо (согласно стилистике Сбера)
             Icon(
@@ -61,62 +81,26 @@ fun RatingDetailsScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.weight(1f)
         ) {
-            // Секция 1: Объём сделок
-            item {
-                DetailedMetricCard(
-                    label = "Объём сделок",
-                    currentValue = "15.2 млн ₽",
-                    targetValue = "20 млн ₽",
-                    points = "+30 баллов",
-                    progress = 0.76f,
-                    accentColor = SberGreen
-                )
+            if (details.isEmpty() && !loading) {
+                item {
+                    Text("Данных пока нет", color = TextSecondaryGray)
+                }
+            } else {
+                items(details.size) { index ->
+                    val item = details[index]
+                    DetailedMetricCard(
+                        label = mapTypeToTitle(item.type),
+                        currentValue = "${item.points}",
+                        targetValue = "баллов",
+                        points = "+${item.points} баллов",
+                        progress = (item.points.coerceAtMost(100).toFloat() / 100f),
+                        accentColor = if (item.points >= 10) SberGreen else WarningOrange
+                    )
+                }
             }
-
-            // Секция 2: Количество сделок
-            item {
-                DetailedMetricCard(
-                    label = "Количество сделок",
-                    currentValue = "12 шт",
-                    targetValue = "15 шт",
-                    points = "+18 баллов",
-                    progress = 0.8f,
-                    accentColor = SberGreen
-                )
-            }
-
-            // Секция 3: Доля банка (Критический показатель)
-            item {
-                DetailedMetricCard(
-                    label = "Доля банка",
-                    currentValue = "32%",
-                    targetValue = "45%",
-                    points = "+5 баллов",
-                    progress = 0.4f,
-                    accentColor = WarningOrange // Оранжевый, если показатель требует внимания
-                )
-            }
-
-            // Секция 4: Ежедневный бонус за активность
-            item {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = BackgroundSuccessGreen),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = SberGreen)
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = "Динамика рейтинга выше на 12%, чем вчера",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = SberGreen,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+            if (error != null) {
+                item {
+                    Text(error!!, color = WarningOrange)
                 }
             }
         }
@@ -137,6 +121,13 @@ fun RatingDetailsScreen(
             )
         }
     }
+}
+
+private fun mapTypeToTitle(type: String): String = when (type) {
+    "NEW_DEAL" -> "Новые сделки"
+    "MARKET_SHARE" -> "Доля банка"
+    "BONUS" -> "Бонусы"
+    else -> type
 }
 
 @Composable

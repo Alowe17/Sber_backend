@@ -12,10 +12,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.myapplication.network.ApiClient
+import com.example.myapplication.network.ApiConfig
+import com.example.myapplication.network.DailyResultRequest
 import com.example.myapplication.ui.theme.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun ScenarioCalculatorScreen() {
+    val scope = rememberCoroutineScope()
+    var saveMessage by remember { mutableStateOf<String?>(null) }
     // Состояния для параметров из ТЗ (стр. 3)
     var dealsCount by remember { mutableStateOf(10f) }      // Кол-во сделок
     var loanVolume by remember { mutableStateOf(15_000_000f) } // Объем в рублях
@@ -126,12 +134,33 @@ fun ScenarioCalculatorScreen() {
 
         // Финальная кнопка
         Button(
-            onClick = { /* Сохранить как цель */ },
+            onClick = {
+                scope.launch {
+                    val request = DailyResultRequest(
+                        dealsCount = dealsCount.toInt(),
+                        volumeAmount = loanVolume.toDouble(),
+                        productsCount = (bankShare / 10f).toInt()
+                    )
+                    runCatching {
+                        withContext(Dispatchers.IO) {
+                            ApiClient.api.saveDailyResult(ApiConfig.USER_ID, request)
+                        }
+                    }.onSuccess {
+                        saveMessage = "Сценарий отправлен в бэкенд"
+                    }.onFailure {
+                        saveMessage = "Ошибка отправки на сервер"
+                    }
+                }
+            },
             modifier = Modifier.fillMaxWidth().height(56.dp),
             colors = ButtonDefaults.buttonColors(containerColor = SberGreen),
             shape = RoundedCornerShape(12.dp)
         ) {
             Text("Сделать моей целью на месяц", fontSize = 16.sp, color = SberWhite)
+        }
+        if (saveMessage != null) {
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(text = saveMessage!!, color = TextSecondaryGray)
         }
     }
 }
