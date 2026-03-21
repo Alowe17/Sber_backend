@@ -1,31 +1,24 @@
 package com.example.myapplication.network
 
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.http.*
 import com.example.myapplication.model.*
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.POST
 
-object ApiService {
+interface ApiService {
+    @GET("api/status/current")
+    suspend fun getStatus(@Header("X-User-Id") employeeId: Long): StatusDto
 
-    suspend fun getStatus(employeeId: Long): StatusDto {
-        return ApiClient.client.get("${ApiClient.BASE_URL}/status/$employeeId")
-            .body()
-    }
+    @GET("api/privileges")
+    suspend fun getPrivileges(@Header("X-User-Id") employeeId: Long): List<PrivilegeDto>
 
-    suspend fun getPrivileges(employeeId: Long): List<PrivilegeDto> {
-        return ApiClient.client.get("${ApiClient.BASE_URL}/privileges/$employeeId")
-            .body()
-    }
+    @GET("api/rating/details")
+    suspend fun getRatingDetails(@Header("X-User-Id") employeeId: Long): List<RatingDetailDto>
 
-    suspend fun getRatingDetails(employeeId: Long): List<RatingDetailDto> {
-        return ApiClient.client.get("${ApiClient.BASE_URL}/rating/$employeeId")
-            .body()
-    }
-
-    suspend fun sendDailyResult(request: DailyResultRequest) {
-        ApiClient.client.post("${ApiClient.BASE_URL}/daily-results") {
-            contentType(ContentType.Application.Json)
-            setBody(request)
-        }
-    }
+    @POST("api/daily-results")
+    suspend fun sendDailyResult(
+        @Header("X-User-Id") employeeId: Long,
+        @Body request: DailyResultRequest
+    )
 }

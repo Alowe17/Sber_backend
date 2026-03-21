@@ -12,9 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.myapplication.model.DailyResultRequest
 import com.example.myapplication.network.ApiClient
-import com.example.myapplication.network.ApiConfig
-import com.example.myapplication.network.DailyResultRequest
 import com.example.myapplication.ui.theme.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -143,7 +142,7 @@ fun ScenarioCalculatorScreen() {
                     )
                     runCatching {
                         withContext(Dispatchers.IO) {
-                            ApiClient.api.saveDailyResult(ApiConfig.USER_ID, request)
+                            ApiClient.api.sendDailyResult(1L, request)
                         }
                     }.onSuccess {
                         saveMessage = "Сценарий отправлен в бэкенд"

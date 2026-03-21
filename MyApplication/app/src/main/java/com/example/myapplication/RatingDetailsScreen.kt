@@ -15,9 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.myapplication.model.RatingDetailDto
 import com.example.myapplication.network.ApiClient
-import com.example.myapplication.network.ApiConfig
-import com.example.myapplication.network.RatingDetailResponse
 import com.example.myapplication.ui.theme.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -26,7 +25,7 @@ import kotlinx.coroutines.withContext
 fun RatingDetailsScreen(
     onNavigateToCalc: () -> Unit
 ) {
-    var details by remember { mutableStateOf<List<RatingDetailResponse>>(emptyList()) }
+    var details by remember { mutableStateOf<List<RatingDetailDto>>(emptyList()) }
     var loading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
 
@@ -35,7 +34,7 @@ fun RatingDetailsScreen(
         error = null
         runCatching {
             withContext(Dispatchers.IO) {
-                ApiClient.api.getRatingDetails(ApiConfig.USER_ID)
+                ApiClient.api.getRatingDetails(1L)
             }
         }.onSuccess {
             details = it
