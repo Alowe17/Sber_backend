@@ -1,14 +1,22 @@
 package com.example.myapplication.network
 
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.json.Json
 
 object ApiClient {
-    val api: SberApi by lazy {
-        Retrofit.Builder()
-            .baseUrl(ApiConfig.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(SberApi::class.java)
+
+    val client = HttpClient(CIO) {
+        install(ContentNegotiation) {
+            json(
+                Json {
+                    ignoreUnknownKeys = true
+                }
+            )
+        }
     }
+
+    const val BASE_URL = "http://10.0.2.2:8080"
 }

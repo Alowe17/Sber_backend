@@ -11,41 +11,39 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.myapplication.network.ApiClient
-import com.example.myapplication.network.ApiConfig
-import com.example.myapplication.network.StatusResponse
+import com.example.myapplication.model.StatusDto
+import com.example.myapplication.network.ApiService
 import com.example.myapplication.ui.theme.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 
 @Composable
 fun CurrentStatusScreen(
     onNavigateToCalc: () -> Unit
 ) {
-    var status by remember { mutableStateOf<StatusResponse?>(null) }
-    var loading by remember { mutableStateOf(true) }
-    var error by remember { mutableStateOf<String?>(null) }
+    var status by remember { mutableStateOf<StatusDto?>(null) }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        loading = true
-        error = null
-        runCatching {
-            withContext(Dispatchers.IO) {
-                ApiClient.api.getCurrentStatus(ApiConfig.USER_ID)
+        scope.launch {
+            try {
+                status = ApiService.getStatus(1)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        }.onSuccess {
-            status = it
-        }.onFailure {
-            error = "Не удалось загрузить статус"
         }
-        loading = false
     }
 
-    val level = status?.currentLevel ?: "UNKNOWN"
-    val nextLevel = status?.nextLevel ?: "NEXT"
-    val pointsToNext = status?.pointsToNext ?: 0
-    val progressPercent = (status?.progressPercent ?: 0).coerceIn(0, 100)
-    val progress = progressPercent / 100f
+    if (status == null) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = SberGreen)
+        }
+        return
+    }
+
+    val data = status!!
 
     Column(
         modifier = Modifier
@@ -60,19 +58,19 @@ fun CurrentStatusScreen(
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        StatusBadge(level = level)
+        StatusBadge(level = data.currentLevel)
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Карточка прогресса
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = BackgroundLightGray)
         ) {
             Column(modifier = Modifier.padding(20.dp)) {
+
                 Text(
-                    text = "До $nextLevel осталось $pointsToNext баллов",
+                    text = "До ${data.nextLevel} осталось ${data.pointsToNext} баллов",
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
@@ -80,7 +78,7 @@ fun CurrentStatusScreen(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 LinearProgressIndicator(
-                    progress = { progress },
+                    progress = { data.progressPercent / 100f },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(10.dp),
@@ -89,25 +87,16 @@ fun CurrentStatusScreen(
                 )
 
                 Text(
-                    text = "$progressPercent%",
+                    text = "${data.progressPercent}%",
                     modifier = Modifier.align(Alignment.End),
                     style = MaterialTheme.typography.bodySmall,
                     color = TextSecondaryGray
                 )
             }
         }
-        if (loading) {
-            Spacer(modifier = Modifier.height(12.dp))
-            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-        }
-        if (error != null) {
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(text = error!!, color = WarningOrange)
-        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Карточка прогноза
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
@@ -122,14 +111,8 @@ fun CurrentStatusScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "При переходе на $nextLevel ваш годовой доход вырастет",
+                    text = "При переходе на ${data.nextLevel} доход вырастет",
                     style = MaterialTheme.typography.bodyMedium
-                )
-                Text(
-                    text = "Экономия на ипотеке: 740 000 ₽",
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 16.sp,
-                    modifier = Modifier.padding(top = 4.dp)
                 )
             }
         }
@@ -145,22 +128,5 @@ fun CurrentStatusScreen(
         ) {
             Text("Как ускорить переход")
         }
-    }
-}
-
-@Composable
-fun StatusBadge(level: String) {
-    Box(
-        modifier = Modifier
-            .size(120.dp)
-            .background(LevelSilver, shape = CircleShape),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = level,
-            color = SberWhite,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp
-        )
     }
 }
