@@ -21,14 +21,15 @@ public class LevelThresholds {
     private Employee employee;
     @Enumerated(EnumType.STRING)
     private EventType eventType;
-    private long value;
+    private Long value;
     private String sourse_id;
     private LocalDateTime dateTime;
 
-    public LevelThresholds (Long id, Employee employee, EventType eventType, String sourse_id, LocalDateTime dateTime) {
+    public LevelThresholds (Long id, Employee employee, EventType eventType, Long value, String sourse_id, LocalDateTime dateTime) {
         this.id = id;
         this.employee = employee;
         this.eventType = eventType;
+        this.value = value;
         this.sourse_id = sourse_id;
         this.dateTime = dateTime;
     }
