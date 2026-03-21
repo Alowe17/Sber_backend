@@ -2,12 +2,10 @@ package com.example.sber.model.entity;
 
 import com.example.sber.model.enums.EventType;
 import jakarta.persistence.*;
-import jdk.jfr.Threshold;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.logging.Level;
 
 @Getter
 @Setter
