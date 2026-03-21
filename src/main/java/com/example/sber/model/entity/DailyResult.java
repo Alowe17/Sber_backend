@@ -17,13 +17,12 @@ public class DailyResult {
 
     @ManyToOne
     private Employee employee;
-
     private int dealsCount;
-    private int creditVolume;
+    private double creditVolume;
     private int productCount;
     private LocalDate date;
 
-    public DailyResult (Long id, Employee employee, int dealsCount, int creditVolume, int productCount, LocalDate date) {
+    public DailyResult (Long id, Employee employee, int dealsCount, double creditVolume, int productCount, LocalDate date) {
         this.id = id;
         this.employee = employee;
         this.dealsCount = dealsCount;

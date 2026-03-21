@@ -20,11 +20,12 @@ public class Task {
     private EventType eventType;
     private LocalDate deadline;
 
-    public Task (Long id, String title, String description, int rewardPoint, EventType eventType, LocalDate deadline) {
+    public Task (Long id, String title, String description, int rewardPoint, int targetValue, EventType eventType, LocalDate deadline) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.rewardPoint = rewardPoint;
+        this.targetValue = targetValue;
         this.eventType = eventType;
         this.deadline = deadline;
     }
