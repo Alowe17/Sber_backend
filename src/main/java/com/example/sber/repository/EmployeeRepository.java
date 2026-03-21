@@ -21,4 +21,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     List<Employee> findByCurrentLevel(CurrentLevel currentLevel);
 
     List<Employee> findByFullNameContainingIgnoreCase(String fullName);
+
+    List<Employee> findTop10ByOrderByRatingPointsDesc();
 }
