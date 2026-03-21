@@ -16,7 +16,6 @@ public class LevelConfig {
 
     @Enumerated(EnumType.STRING)
     private CurrentLevel currentLevel;
-
     private int minPoints;
 
     public LevelConfig (Long id, CurrentLevel currentLevel, int minPoints) {
