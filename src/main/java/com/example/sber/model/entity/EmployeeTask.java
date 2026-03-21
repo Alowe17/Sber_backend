@@ -1,9 +1,13 @@
 package com.example.sber.model.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "employee_task")
+@Getter
+@Setter
 public class EmployeeTask {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
