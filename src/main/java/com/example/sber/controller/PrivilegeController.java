@@ -15,7 +15,7 @@ public class PrivilegeController {
     private final PrivilegeServer privilegeServer;
 
     @GetMapping
-    public List<PrivilegeDto> getPrivileges(@RequestHeader("X-User-Id") Long employeeId) {
+    public List<PrivilegeDto> getPrivileges(@RequestParam Long employeeId) {
         return privilegeServer.getPrivileges(employeeId);
     }
 }

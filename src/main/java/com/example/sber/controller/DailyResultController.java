@@ -26,7 +26,7 @@ public class DailyResultController {
 
     @PostMapping
     public Map<String, Object> saveDailyResults(
-            @RequestHeader("X-User-Id") @Positive Long employeeId,
+            @RequestParam @Positive Long employeeId,
             @Valid @RequestBody DailyResultRequest request) {
         dailyResultService.createDailyResult(
                 employeeId,
@@ -42,13 +42,13 @@ public class DailyResultController {
     }
 
     @GetMapping("/today")
-    public Map<String, Object> getTodayResults(@RequestHeader("X-User-Id") @Positive Long employeeId) {
+    public Map<String, Object> getTodayResults(@RequestParam @Positive Long employeeId) {
         return dailyResultService.getTodayResults(employeeId);
     }
 
     @GetMapping("/month")
     public List<DailyResult> getMonthResults(
-            @RequestHeader("X-User-Id") @Positive Long employeeId,
+            @RequestParam @Positive Long employeeId,
             @RequestParam @Min(2000) int year,
             @RequestParam @Min(1) @Max(12) int month) {
         return dailyResultService.getMonthResults(employeeId, year, month);
