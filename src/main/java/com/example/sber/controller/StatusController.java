@@ -7,13 +7,16 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/status")
-@RequiredArgsConstructor
 public class StatusController {
 
     private final StatusService statusService;
 
-    @GetMapping("/current")
-    public StatusDto getCurrentStatus(@RequestHeader("X-User-Id") Long employeeId) {
-        return statusService.getStatus(employeeId);
+    public StatusController(StatusService statusService) {
+        this.statusService = statusService;
+    }
+
+    @GetMapping("/{id}")
+    public StatusDto getStatus(@PathVariable Long id) {
+        return statusService.getStatus(id);
     }
 }

@@ -7,6 +7,8 @@ import com.example.sber.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class DailyResultService {
@@ -35,5 +37,25 @@ public class DailyResultService {
         dailyResultRepository.save(dailyResult);
 
         ratingService.updateRating(employee, deals, volume, products);
+    }
+
+    public Map<String, Object> getTodayResults(Long employeeId) {
+        List<DailyResult> results = dailyResultRepository.findByEmployeeIdAndDate(employeeId, LocalDate.now());
+        DailyResult result = results.stream().findFirst().orElse(null);
+        return Map.of(
+                "date", LocalDate.now().toString(),
+                "dealsCount", result != null ? result.getDealsCount() : 0,
+                "volumeAmount", result != null ? result.getCreditVolume() : 0,
+                "productsCount", result != null ? result.getProductCount() : 0,
+                "isSubmitted", result != null
+        );
+    }
+
+    public List<DailyResult> getMonthResults(Long employeeId, int year, int month) {
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.plusMonths(1).minusDays(1);
+        return dailyResultRepository.findByEmployeeId(employeeId).stream()
+                .filter(r -> !r.getDate().isBefore(startDate) && !r.getDate().isAfter(endDate))
+                .toList();
     }
 }

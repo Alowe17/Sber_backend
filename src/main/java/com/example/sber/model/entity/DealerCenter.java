@@ -16,7 +16,8 @@ public class DealerCenter {
     private String code;
     private String name;
     private String address;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id")
     private Region region;
 
     public DealerCenter (Long id, String code, String name, String address, Region region) {
