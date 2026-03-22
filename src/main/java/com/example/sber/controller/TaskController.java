@@ -21,7 +21,7 @@ public class TaskController {
     }
 
     @GetMapping("/my")
-    public List<EmployeeTask> getMyTasks(@RequestHeader("X-User-Id") Long employeeId) {
+    public List<EmployeeTask> getMyTasks(@RequestParam Long employeeId) {
         return taskService.getEmployeeTasks(employeeId);
     }
 }
